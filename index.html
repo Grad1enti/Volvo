@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="color-scheme" content="light dark" />
+  <meta name="theme-color" content="#eef1f4" media="(prefers-color-scheme: light)" />
+  <meta name="theme-color" content="#111418" media="(prefers-color-scheme: dark)" />
+  <title>V40 Cross Country Exploded</title>
+  <link rel="stylesheet" href="/src/style.css" />
+</head>
+<body>
+  <canvas id="scene" aria-label="3D model of a Volvo V40 Cross Country T4 AWD with LPG system"></canvas>
+
+  <header class="top">
+    <div class="title">
+      <h1>V40 Cross Country</h1>
+      <p>2014 · T4 AWD · LPG autogas</p>
+    </div>
+    <button id="resetView" class="icon-btn" type="button" aria-label="Reset view" title="Reset view">
+      <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d="M4 12a8 8 0 1 0 2.4-5.7M4 4v4.5h4.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </button>
+  </header>
+
+  <aside id="info" class="info" hidden aria-live="polite">
+    <div class="info-head">
+      <span class="cat-dot" id="infoDot"></span>
+      <span class="info-cat" id="infoCat"></span>
+      <button id="infoClose" class="close" type="button" aria-label="Close">×</button>
+    </div>
+    <h2 id="infoName"></h2>
+    <p id="infoDesc"></p>
+  </aside>
+
+  <div id="hint" class="hint">Drag to orbit · pinch to zoom · tap a part</div>
+
+  <section class="panel" aria-label="Controls">
+    <div class="chips" id="chips" role="radiogroup" aria-label="Show system"></div>
+    <div class="row">
+      <label for="explode" class="lbl">Pull apart</label>
+      <input id="explode" type="range" min="0" max="100" value="0" step="1" />
+    </div>
+    <div class="row">
+      <label class="switch">
+        <input id="drive" type="checkbox" role="switch" />
+        <span class="track" aria-hidden="true"><span class="knob"></span></span>
+        <span class="lbl">Drive</span>
+      </label>
+      <span class="stat" id="stat"></span>
+    </div>
+  </section>
+
+  <script type="module" src="/src/main.js"></script>
+</body>
+</html>

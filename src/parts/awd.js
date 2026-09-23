@@ -1,0 +1,1 @@
+export function buildAWD(reg) {}

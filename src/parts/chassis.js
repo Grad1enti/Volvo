@@ -44,12 +44,12 @@ function wheelAssembly() {
   g.add(mesh(cylZ(rr, rr, W * 0.86, 40, true), M.darkAlu));
   const lip = new THREE.TorusGeometry(rr, 0.009, 6, 48);
   g.add(mesh(lip, M.alu, [0, 0, W * 0.42]));
-  // five double spokes
+  // ten twin spokes
   const face = W * 0.36;
-  for (let i = 0; i < 5; i++) {
-    const a = (i / 5) * Math.PI * 2;
-    for (const d of [-0.12, 0.12]) {
-      const sp = mesh(rbox(0.026, rr * 0.8, 0.028, 0.008), M.alu);
+  for (let i = 0; i < 10; i++) {
+    const a = (i / 10) * Math.PI * 2;
+    for (const d of [-0.07, 0.07]) {
+      const sp = mesh(rbox(0.014, rr * 0.8, 0.022, 0.005), M.alu);
       const ang = a + d;
       sp.position.set(Math.cos(ang + Math.PI / 2) * rr * 0.5, Math.sin(ang + Math.PI / 2) * rr * 0.5, face);
       sp.rotation.z = ang;

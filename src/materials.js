@@ -5,7 +5,7 @@ const std = (color, roughness = 0.5, metalness = 0, extra = {}) =>
 
 export const M = {
   paint: new THREE.MeshPhysicalMaterial({
-    color: 0x3c6e96, roughness: 0.32, metalness: 0.55, clearcoat: 0.8, clearcoatRoughness: 0.15, side: THREE.DoubleSide,
+    color: 0x9aa0a6, roughness: 0.3, metalness: 0.7, clearcoat: 0.8, clearcoatRoughness: 0.15, side: THREE.DoubleSide,
   }),
   cladding: std(0x23262a, 0.78, 0.0),
   gloss: std(0x0d0f12, 0.18, 0.3),

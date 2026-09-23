@@ -1,7 +1,7 @@
 import * as THREE from 'three';
 import { D } from '../dims.js';
 import { M } from '../materials.js';
-import { surface, loftX, mesh, rbox, tube, group, clamp, lerp } from '../geom.js';
+import { surface, loftX, mesh, rbox, tube, rod, group, clamp, lerp } from '../geom.js';
 
 // ---------------------------------------------------------------------------
 // Body profile. x forward (+ = front), y up, z to the car's right. Metres.
@@ -388,5 +388,24 @@ export function buildBody(reg) {
     add(s > 0 ? 'Side cladding (right)' : 'Side cladding (left)',
       'Black wheel-arch flares and sill protection, one of the Cross Country’s visual cues. They protect the paint from stone chips.',
       g, [0, -0.12, s * 1.1], 0);
+  }
+
+  // --- Dashboard (left-hand drive) ---
+  {
+    const secs = [0.28, 0.36, 0.5, 0.66, 0.82].map((x) => {
+      const t = (x - 0.28) / 0.54;
+      return { x, y0: 0.52 + 0.1 * t, y1: lerp(0.9, 0.97, t), hwBot: 0.62, hwTop: hwAt(x, 0.95) * 0.92, e: 6 };
+    });
+    const g = group(mesh(loftX(secs, 32), M.interior));
+    g.add(mesh(rbox(0.16, 0.08, 0.3, 0.03), M.interior, [0.36, 0.93, -0.37])); // instrument binnacle
+    g.add(mesh(rbox(0.3, 0.3, 0.2, 0.03), M.interior, [0.2, 0.45, 0])); // centre console
+    const wheel = new THREE.TorusGeometry(0.185, 0.017, 10, 40);
+    wheel.rotateY(Math.PI / 2);
+    wheel.rotateZ(-0.35);
+    g.add(mesh(wheel, M.black, [0.1, 0.84, -0.37]));
+    g.add(rod([0.1, 0.84, -0.37], [0.36, 0.76, -0.37], 0.025, 12, M.black));
+    g.add(mesh(rbox(0.05, 0.1, 0.12, 0.02), M.black, [0.1, 0.84, -0.37]));
+    add('Dashboard', 'Simplified dashboard with the steering wheel and centre console, shown so you can see where the LPG switch is mounted.',
+      g, [-0.4, 0.55, 0], 0.2);
   }
 }

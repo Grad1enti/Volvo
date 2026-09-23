@@ -84,15 +84,29 @@ export class Registry {
     this.spinners.push({ obj, axis, ratio });
   }
 
-  /** Apply pull-apart amount t (0..1) with per-part stagger. */
-  setExplode(t) {
+  /**
+   * Apply pull-apart amount t (0..1) with per-part stagger. Ghosted / hidden
+   * parts ease back to their assembled position so the shell stays intact.
+   * Returns true while any part is still moving.
+   */
+  update(t, dt) {
     const S = 0.4;
+    let busy = false;
     for (const p of this.parts) {
-      const local = clamp((t - p.delay * S) / (1 - S));
-      const e = easeInOut(local);
-      p.outer.position.copy(p.dir).multiplyScalar(e);
-      p.e = e;
-      const show = e > 0.01 && p.alphaTarget === 1;
+      const active = p.alphaTarget === 1;
+      const target = active ? easeInOut(clamp((t - p.delay * S) / (1 - S))) : 0;
+      if (p.e === undefined) p.e = target;
+      if (active && p.settled) p.e = target; // follow the slider directly
+      else if (p.e !== target) {
+        const step = dt * 2.5;
+        p.e = Math.abs(target - p.e) <= step ? target : p.e + Math.sign(target - p.e) * step;
+        busy = true;
+      }
+      if (p.e === target) p.settled = active;
+      if (p.e === p.lastE) continue;
+      p.lastE = p.e;
+      p.outer.position.copy(p.dir).multiplyScalar(p.e);
+      const show = p.e > 0.01 && p.alphaTarget === 1;
       p.guide.visible = show;
       if (show) {
         const a = p.guide.geometry.attributes.position;
@@ -102,10 +116,12 @@ export class Registry {
         p.guide.computeLineDistances();
       }
     }
+    return busy;
   }
 
   setFilter(cat) {
     for (const p of this.parts) {
+      p.settled = false;
       if (cat === 'all' || p.cat === cat) p.alphaTarget = 1;
       else if (p.cat === 'body') p.alphaTarget = GHOST;
       else p.alphaTarget = 0;

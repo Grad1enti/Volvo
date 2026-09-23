@@ -6,7 +6,7 @@ import { D } from './dims.js';
 import { buildBody } from './parts/body.js';
 import { buildChassis } from './parts/chassis.js';
 import { buildPowertrain } from './parts/powertrain.js';
-import { buildAWD } from './parts/awd.js';
+import { buildAWD, PROP_RATIO } from './parts/awd.js';
 import { buildLPG } from './parts/lpg.js';
 
 const $ = (id) => document.getElementById(id);
@@ -95,7 +95,7 @@ function fitDistance() {
   const vf = THREE.MathUtils.degToRad(camera.fov) * (free / innerHeight);
   const hf = 2 * Math.atan(Math.tan(THREE.MathUtils.degToRad(camera.fov) / 2) * camera.aspect);
   const r = 2.55;
-  return r / Math.sin(Math.min(vf, hf) / 2) * (camera.aspect < 1 ? 0.95 : 0.85);
+  return r / Math.sin(Math.min(vf, hf) / 2) * (camera.aspect < 1 ? 0.88 : 0.85);
 }
 function setView(az = VIEW.az, el = VIEW.el, scale = 1) {
   baseDist = fitDistance() * scale;
@@ -157,12 +157,11 @@ function setDrive(on) {
   state.dirty = true;
 }
 // Road speed for the demo; wheels, driveshafts and prop shaft all derive from it.
-const REAR_DIFF_RATIO = 2.6; // prop shaft turns this much faster than the rear wheels
 function speedKmh() { return reduced ? 3 : 8; }
 function updateStat() {
   if (!state.drive) { $('stat').textContent = ''; return; }
   const wheelRpm = (speedKmh() / 3.6 / D.tyreR) * 60 / (2 * Math.PI);
-  $('stat').textContent = `${speedKmh()} km/h · wheels ${wheelRpm.toFixed(0)} rpm · prop ${(wheelRpm * REAR_DIFF_RATIO).toFixed(0)} rpm`;
+  $('stat').textContent = `${speedKmh()} km/h · wheels ${wheelRpm.toFixed(0)} rpm · prop ${(wheelRpm * PROP_RATIO).toFixed(0)} rpm`;
 }
 
 $('resetView').addEventListener('click', () => setView());
@@ -220,8 +219,10 @@ function frame() {
   if (reduced) state.explode = state.explodeTarget;
   else state.explode += (state.explodeTarget - state.explode) * Math.min(1, dt * 7);
   if (Math.abs(state.explode - state.explodeTarget) < 1e-4) state.explode = state.explodeTarget;
+  // parts follow the slider directly; they only animate on their own when the
+  // filter changes (ghosted parts glide back into the shell)
+  if (reg.update(state.explode, reduced ? Infinity : dt)) state.dirty = true;
   if (state.explode !== lastExplode) {
-    reg.setExplode(state.explode);
     // lift the whole car as it comes apart so parts pushed downward stay above the floor
     reg.root.position.y = state.explode * LIFT;
     // follow with the camera: raise the target with the lift and dolly out as parts spread

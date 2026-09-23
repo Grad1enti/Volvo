@@ -171,9 +171,13 @@ export function buildBody(reg) {
   {
     const xs = [-1.7, -1.8, -1.9, -1.98, -2.04, -2.08, -2.11, -2.13, XR];
     const bump = loftX(xs.map((x) => ({ x, y0: 0.39, y1: 0.605, hwBot: planHW(x) * 0.985, hwTop: planHW(x) * 0.975, e: 7 })), 36);
-    const clad = loftX(xs.map((x) => ({ x: x - 0.008, y0: 0.2, y1: 0.41, hwBot: planHW(x) * 0.95, hwTop: planHW(x) + 0.008, e: 6 })), 36);
+    // the lower edge sweeps up towards the back, tucking the bumper in underneath
+    const tuck = (x) => 0.2 + 0.14 * clamp((-1.88 - x) / (-1.88 - XR)) ** 1.3;
+    const clad = loftX(xs.map((x) => ({ x: x - 0.008, y0: tuck(x), y1: 0.41, hwBot: planHW(x) * (0.95 - 0.06 * (tuck(x) - 0.2) / 0.14), hwTop: planHW(x) + 0.008, e: 6 })), 36);
     const g = group(mesh(bump, M.paint), mesh(clad, M.cladding));
-    g.add(mesh(rbox(0.05, 0.06, 0.62, 0.02), M.alu, [XR + 0.005, 0.25, 0]));
+    const skid = mesh(rbox(0.2, 0.012, 0.6, 0.006), M.alu, [-2.035, tuck(-2.035) - 0.004, 0]);
+    skid.rotation.z = -0.5;
+    g.add(skid);
     for (const s of [-1, 1]) g.add(mesh(rbox(0.02, 0.03, 0.14, 0.01), M.taillight, [XR + 0.004, 0.36, s * 0.42]));
     add('Rear bumper', 'Rear bumper cover with black protective cladding along the bottom and a silver skid-plate insert.',
       g, [-1.05, -0.05, 0], 0);

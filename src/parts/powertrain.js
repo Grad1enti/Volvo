@@ -90,8 +90,8 @@ export function buildPowertrain(reg) {
     g.add(mid);
     g.add(mesh(tube([[-0.62, 0.24, 0.18], [-1.1, 0.22, 0.2], [-1.4, 0.21, 0.2], [-1.48, 0.21, 0.08]], 0.026, 40, 10), M.exhaust));
     g.add(mesh(rbox(0.22, 0.09, 0.62, 0.04), M.exhaust, [-1.58, 0.21, 0.2]));
-    g.add(mesh(tube([[-1.62, 0.21, 0.48], [-1.9, 0.22, 0.5], [-2.12, 0.23, 0.5]], 0.028, 30, 10), M.exhaust));
-    g.add(mesh(cylX(0.036, 0.036, 0.06, 20, true), M.chrome, [-2.12, 0.23, 0.5]));
+    g.add(mesh(tube([[-1.62, 0.21, 0.48], [-1.9, 0.22, 0.5], [-2.05, 0.24, 0.5]], 0.028, 30, 10), M.exhaust));
+    g.add(mesh(cylX(0.036, 0.036, 0.06, 20, true), M.chrome, [-2.05, 0.24, 0.5]));
     add('Exhaust and catalytic converter', 'Burnt gases leave the turbo, pass through the catalytic converter that cleans them, then two silencers before the tailpipe. It runs beside the prop shaft under the car.',
       g, [0, -0.45, 0.35], 0.5);
   }
